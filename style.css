@@ -1,0 +1,30 @@
+
+.input-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .input-row label {
+    margin-right: 10px;
+  }
+  
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
+    grid-gap: 1px;
+    border: 1px solid black;
+    margin-bottom: 10px;
+    max-width: 500px;
+  }
+  
+  .grid-container div {
+    background-color: white;
+    cursor: pointer;
+  }
+
+  td {
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+}

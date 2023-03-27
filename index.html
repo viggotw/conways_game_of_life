@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Grid</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/ff6525a9f2.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="input">
+                <label for="size">Size:</label>
+                <input type="number" id="size" name="size" min="1" max="100">
+                <button onclick="createGrid()">Create Grid</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="controls">
+                <button onclick="play()"><i class="fa-solid fa-play"></i></button>
+                <input type="range" min="1" max="10" step="1">
+            </div>
+        </div>
+        <div class="row">
+            <table id="grid"></table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
