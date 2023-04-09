@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Grid</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/ff6525a9f2.js" crossorigin="anonymous"></script>
 
@@ -11,21 +12,21 @@
 
 <body>
     <div class="container">
-        <div class="row">
-            <div class="input">
-                <label for="size">Size:</label>
-                <input type="number" id="size" name="size" min="1" max="100">
-                <button onclick="createGrid()">Create Grid</button>
-            </div>
+        <h1>Conway's Game of Life</h1>
+        
+        <div class="input-container">
+            <label for="size">Size:</label>
+            <input type="number" id="size" name="size" min="1" max="100">
+            <button onclick="createGrid()">Create Grid</button>
+            <button onclick="resetGrid()">Reset</button>
         </div>
-        <div class="row">
-            <div class="controls">
-                <button onclick="play()"><i class="fa-solid fa-play"></i></button>
-                <input type="range" min="1" max="10" step="1">
-            </div>
-        </div>
-        <div class="row">
-            <table id="grid"></table>
+
+        <div class="grid-container" id="grid"></div>
+
+        <div class="controls-container">
+            <button onclick="play()"><i class="fa-solid fa-play"></i></button>
+            <button "><i class=" fa-solid fa-forward"></i></button>
+            <input type="range" min="1" max="3" step="1" value="1">
         </div>
     </div>
     <script src="script.js"></script>
