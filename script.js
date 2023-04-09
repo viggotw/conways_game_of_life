@@ -24,13 +24,13 @@ window.addEventListener('load', function () {
 
 speedSlider.addEventListener("input", () => {
     intervalTime = 1000 / speedSlider.value;
-  });
+});
 
 function createGrid() {
     let size = document.getElementById("size").value;
     let grid = document.getElementById("grid");
     grid.innerHTML = "";
-    grid.style.setProperty('--size', size); 
+    grid.style.setProperty('--size', size);
     for (let i = 0; i < size; i++) {
         let row = document.createElement("div");
         for (let j = 0; j < size; j++) {
@@ -41,7 +41,7 @@ function createGrid() {
             cell.setAttribute("data-value", 0);
             row.appendChild(cell);
         }
-        grid.appendChild(row);  
+        grid.appendChild(row);
     }
 }
 
@@ -95,11 +95,11 @@ function getNextGeneration(matrix) {
     // Loop through the matrix and get the next generation
     matrix.forEach((row, rowIndex) => {
         row.forEach((col, colIndex) => {
-        const nextValue = getNextCellValue(matrix, rowIndex, colIndex);
-        if (!nextMatrix[rowIndex]) {
-            nextMatrix[rowIndex] = [];
-        }
-        nextMatrix[rowIndex][colIndex] = nextValue;
+            const nextValue = getNextCellValue(matrix, rowIndex, colIndex);
+            if (!nextMatrix[rowIndex]) {
+                nextMatrix[rowIndex] = [];
+            }
+            nextMatrix[rowIndex][colIndex] = nextValue;
         });
     });
 
@@ -113,16 +113,14 @@ function getNextCellValue(matrix, rowIndex, cellIndex) {
 
     // If the current cell is alive
     if (currentValue) {
-        if (liveNeighbors < 2) {
-        return 0;
-        } else if (liveNeighbors === 2 || liveNeighbors === 3) {
-        return 1;
-        } else if (liveNeighbors > 3) {
-        return 0;
+        if (liveNeighbors === 2 || liveNeighbors === 3) {
+            return 1;
+        } else {
+            return 0;
         }
     } else {
         if (liveNeighbors === 3) {
-        return 1;
+            return 1;
         }
     }
 
@@ -135,13 +133,13 @@ function getLiveNeighbors(matrix, rowIndex, cellIndex) {
     // Check the top row
     if (matrix[rowIndex - 1]) {
         if (matrix[rowIndex - 1][cellIndex - 1]) {
-        liveNeighbors++;
+            liveNeighbors++;
         }
         if (matrix[rowIndex - 1][cellIndex]) {
-        liveNeighbors++;
+            liveNeighbors++;
         }
         if (matrix[rowIndex - 1][cellIndex + 1]) {
-        liveNeighbors++;
+            liveNeighbors++;
         }
     }
 
@@ -156,13 +154,13 @@ function getLiveNeighbors(matrix, rowIndex, cellIndex) {
     // Check the bottom row
     if (matrix[rowIndex + 1]) {
         if (matrix[rowIndex + 1][cellIndex - 1]) {
-        liveNeighbors++;
+            liveNeighbors++;
         }
         if (matrix[rowIndex + 1][cellIndex]) {
-        liveNeighbors++;
+            liveNeighbors++;
         }
         if (matrix[rowIndex + 1][cellIndex + 1]) {
-        liveNeighbors++;
+            liveNeighbors++;
         }
     }
 
@@ -212,7 +210,7 @@ function play() {
         const value = parseInt(cell.getAttribute('data-value'));
 
         if (!matrix[row]) {
-        matrix[row] = [];
+            matrix[row] = [];
         }
         matrix[row][col] = value;
     });
