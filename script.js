@@ -1,9 +1,20 @@
-let painting = false;
-let paintColor = "black";
+// Constants
+const COLOR_MAP = {
+    0: 'white',
+    1: '#333'
+};
 
+// Global variables
+let painting = false;
+let paintValue = 0;
+
+// Global event listeners
 window.addEventListener('load', function () {
     let defaultSize = 10; // set your default grid size here
     document.getElementById("size").value = defaultSize;
+    document.addEventListener("mousedown", startPainting);
+    document.addEventListener("mouseup", stopPainting);
+    document.addEventListener("mouseover", applyPainting);
     createGrid();
 });
 
@@ -17,34 +28,32 @@ function createGrid() {
         for (let j = 0; j < size; j++) {
             let cell = document.createElement("div");
             cell.classList.add("cell");
-            cell.setAttribute("data-row", i);
-            cell.setAttribute("data-col", j);
-            // cell.addEventListener("click", toggleColor);
-            cell.addEventListener("mousedown", startPainting);
-            cell.addEventListener("mouseup", stopPainting);
-            // cell.addEventListener("mouseover", applyPainting);
+            cell.setAttribute("data-col", i);
+            cell.setAttribute("data-row", j);
+            cell.setAttribute("data-value", 0);
             row.appendChild(cell);
         }
         grid.appendChild(row);  
     }
-    grid.addEventListener("mouseover", applyPainting);
+}
+
+function clearGrid() {
+    let cells = document.getElementsByClassName("cell");
+    for (let i = 0; i < cells.length; i++) {
+        cells[i].setAttribute("data-value", 0);
+        cells[i].style.backgroundColor = COLOR_MAP[0];
+    }
 }
 
 function startPainting(event) {
-    console.log("start painting");
-    let cell = event.target;
-    painting = true;
-    toggleColor(event);
-    paintColor = cell.style.backgroundColor;
-    console.log(painting);
-    console.log(paintColor);
-    event.target.removeEventListener("mouseover", applyPainting);
+    if (event.target.classList.contains("cell")) {
+        painting = true;
+        paintValue = toggleColor(event);
+        event.target.removeEventListener("mouseover", applyPainting);
+    }
 }
 
-function stopPainting() {
-    console.log("stop painting");
-    console.log(painting);
-    console.log(paintColor);
+function stopPainting(event) {
     painting = false;
     event.target.addEventListener("mouseover", applyPainting);
 }
@@ -52,19 +61,143 @@ function stopPainting() {
 function applyPainting(event) {
     let cell = event.target;
     if (painting && cell.classList.contains("cell")) {
-        console.log("apply painting");
-        console.log(painting);
-        console.log(paintColor);
-        cell.style.backgroundColor = paintColor;
+        cell.setAttribute("data-value", paintValue);
+        cell.style.backgroundColor = COLOR_MAP[paintValue];
     }
 }
 
 function toggleColor(event) {
     let cell = event.target;
-    let currentColor = cell.style.backgroundColor;
-    if (!currentColor || currentColor === "white") {
-        cell.style.backgroundColor = "black";
+    let currentValue = parseInt(cell.getAttribute('data-value'));
+    let newValue;
+
+    if (!currentValue || currentValue === 0) {
+        newValue = 1;
     } else {
-        cell.style.backgroundColor = "white";
+        newValue = 0;
     }
+    cell.setAttribute('data-value', newValue);
+    cell.style.backgroundColor = COLOR_MAP[newValue];
+    return newValue;
+}
+
+function getNextGeneration(matrix) {
+    const nextMatrix = [];
+
+    // Loop through the matrix and get the next generation
+    matrix.forEach((row, rowIndex) => {
+        row.forEach((col, colIndex) => {
+        const nextValue = getNextCellValue(matrix, rowIndex, colIndex);
+        if (!nextMatrix[rowIndex]) {
+            nextMatrix[rowIndex] = [];
+        }
+        nextMatrix[rowIndex][colIndex] = nextValue;
+        });
+    });
+
+    return nextMatrix;
+
+}
+
+function getNextCellValue(matrix, rowIndex, cellIndex) {
+    const currentValue = matrix[rowIndex][cellIndex];
+    const liveNeighbors = getLiveNeighbors(matrix, rowIndex, cellIndex);
+
+    // If the current cell is alive
+    if (currentValue) {
+        if (liveNeighbors < 2) {
+        return 0;
+        } else if (liveNeighbors === 2 || liveNeighbors === 3) {
+        return 1;
+        } else if (liveNeighbors > 3) {
+        return 0;
+        }
+    } else {
+        if (liveNeighbors === 3) {
+        return 1;
+        }
+    }
+
+    return 0;
+}
+
+function getLiveNeighbors(matrix, rowIndex, cellIndex) {
+    let liveNeighbors = 0;
+
+    // Check the top row
+    if (matrix[rowIndex - 1]) {
+        if (matrix[rowIndex - 1][cellIndex - 1]) {
+        liveNeighbors++;
+        }
+        if (matrix[rowIndex - 1][cellIndex]) {
+        liveNeighbors++;
+        }
+        if (matrix[rowIndex - 1][cellIndex + 1]) {
+        liveNeighbors++;
+        }
+    }
+
+    // Check the middle row
+    if (matrix[rowIndex][cellIndex - 1]) {
+        liveNeighbors++;
+    }
+    if (matrix[rowIndex][cellIndex + 1]) {
+        liveNeighbors++;
+    }
+
+    // Check the bottom row
+    if (matrix[rowIndex + 1]) {
+        if (matrix[rowIndex + 1][cellIndex - 1]) {
+        liveNeighbors++;
+        }
+        if (matrix[rowIndex + 1][cellIndex]) {
+        liveNeighbors++;
+        }
+        if (matrix[rowIndex + 1][cellIndex + 1]) {
+        liveNeighbors++;
+        }
+    }
+
+    return liveNeighbors;
+}
+
+function updateGrid(matrix) {
+    const grid = document.getElementById('grid');
+    const cells = grid.querySelectorAll('.cell');
+
+    // Loop through the cells and update the background colors
+    cells.forEach((cell) => {
+        const row = parseInt(cell.getAttribute('data-row'));
+        const col = parseInt(cell.getAttribute('data-col'));
+        const value = matrix[row][col];
+
+        cell.setAttribute('data-value', value);
+        cell.style.backgroundColor = COLOR_MAP[value];
+    });
+}
+
+function play() {
+    // Get the grid element and all of its cells
+    const grid = document.getElementById('grid');
+    const cells = grid.querySelectorAll('.cell');
+
+    // Create a matrix to store the background colors
+    const matrix = [];
+
+    // Loop through the cells and store the background colors
+    cells.forEach((cell) => {
+        const row = parseInt(cell.getAttribute('data-row'));
+        const col = parseInt(cell.getAttribute('data-col'));
+        const value = parseInt(cell.getAttribute('data-value'));
+
+        // Store the background color in the matrix
+        if (!matrix[row]) {
+        matrix[row] = [];
+        }
+        matrix[row][col] = value;
+    });
+    console.log(matrix);
+
+    const nextMatrix = getNextGeneration(matrix);
+    updateGrid(nextMatrix);
 }
