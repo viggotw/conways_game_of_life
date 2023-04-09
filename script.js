@@ -5,8 +5,12 @@ const COLOR_MAP = {
 };
 
 // Global variables
+const speedSlider = document.getElementById("speedSlider");
+
+let intervalTime = 1000 / speedSlider.value; // set initial interval time based on slider value
 let painting = false;
 let paintValue = 0;
+let intervalId;
 
 // Global event listeners
 window.addEventListener('load', function () {
@@ -17,6 +21,10 @@ window.addEventListener('load', function () {
     document.addEventListener("mouseover", applyPainting);
     createGrid();
 });
+
+speedSlider.addEventListener("input", () => {
+    intervalTime = 1000 / speedSlider.value;
+  });
 
 function createGrid() {
     let size = document.getElementById("size").value;
@@ -165,7 +173,7 @@ function updateGrid(matrix) {
     const grid = document.getElementById('grid');
     const cells = grid.querySelectorAll('.cell');
 
-    // Loop through the cells and update the background colors
+    // Loop through the cells and update the values
     cells.forEach((cell) => {
         const row = parseInt(cell.getAttribute('data-row'));
         const col = parseInt(cell.getAttribute('data-col'));
@@ -176,21 +184,33 @@ function updateGrid(matrix) {
     });
 }
 
+function pressPlay() {
+    togglePlayBtn();
+    clearInterval(intervalId);
+    // your logic for updating the grid for the next iteration
+    intervalId = setInterval(play, intervalTime);
+    play();
+}
+
+function pressPause() {
+    togglePlayBtn();
+    clearInterval(intervalId);
+}
+
 function play() {
     // Get the grid element and all of its cells
     const grid = document.getElementById('grid');
     const cells = grid.querySelectorAll('.cell');
 
-    // Create a matrix to store the background colors
+    // Create a matrix to store the values of the cells
     const matrix = [];
 
-    // Loop through the cells and store the background colors
+    // Loop through the cells and store their values in the matrix
     cells.forEach((cell) => {
         const row = parseInt(cell.getAttribute('data-row'));
         const col = parseInt(cell.getAttribute('data-col'));
         const value = parseInt(cell.getAttribute('data-value'));
 
-        // Store the background color in the matrix
         if (!matrix[row]) {
         matrix[row] = [];
         }
@@ -200,4 +220,19 @@ function play() {
 
     const nextMatrix = getNextGeneration(matrix);
     updateGrid(nextMatrix);
+}
+
+function togglePlayBtn() {
+    // Toggle the play button into a stop button with class="fa-solid fa-stop" and link to the pause function
+    const playButton = document.getElementById('play-btn');
+    const btnContent = playButton.children[0];
+    if (btnContent.classList.contains('fa-play')) {
+        btnContent.classList.remove('fa-play');
+        btnContent.classList.add('fa-stop');
+        playButton.setAttribute('onclick', 'pressPause()');
+    } else {
+        btnContent.classList.remove('fa-stop');
+        btnContent.classList.add('fa-play');
+        playButton.setAttribute('onclick', 'pressPlay()');
+    }
 }
