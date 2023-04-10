@@ -1,8 +1,11 @@
 // Constants
 const COLOR_MAP = {
     0: 'white',
-    1: '#333'
+    1: '#333',
+    2: '#CCC',
+    3: '#F64F64'
 };
+const NUM_COLORS = 4;
 
 // Global variables
 const speedSlider = document.getElementById("speedSlider");
@@ -86,12 +89,11 @@ function toggleColor(event) {
     let currentValue = parseInt(cell.getAttribute('data-value'));
     let newValue;
 
-    // TODO: Support more colors
-    if (!currentValue || currentValue === 0) {
-        newValue = 1;
-    } else {
+    newValue = currentValue + 1;
+    if (newValue === NUM_COLORS) {
         newValue = 0;
     }
+
     cell.setAttribute('data-value', newValue);
     cell.style.backgroundColor = COLOR_MAP[newValue];
     return newValue;
