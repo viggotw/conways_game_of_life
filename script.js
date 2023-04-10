@@ -24,6 +24,7 @@ window.addEventListener('load', function () {
 
 speedSlider.addEventListener("input", () => {
     intervalTime = 1000 / (1+parseInt(speedSlider.value))
+    updateInterval();
 });
 
 function createGrid() {
@@ -85,6 +86,7 @@ function toggleColor(event) {
     let currentValue = parseInt(cell.getAttribute('data-value'));
     let newValue;
 
+    // TODO: Support more colors
     if (!currentValue || currentValue === 0) {
         newValue = 1;
     } else {
@@ -93,6 +95,65 @@ function toggleColor(event) {
     cell.setAttribute('data-value', newValue);
     cell.style.backgroundColor = COLOR_MAP[newValue];
     return newValue;
+}
+
+function updateInterval() {
+    clearInterval(intervalId);
+    console.log(intervalTime)
+    intervalId = setInterval(play, intervalTime);
+}
+
+function pressPlay() {
+    // This function starts the game when a player presses the play button
+    togglePlayBtn();
+    updateInterval();
+    play();
+}
+
+function pressPause() {
+    // This function pauses the game when a player presses the pause button
+    togglePlayBtn();
+    clearInterval(intervalId);
+}
+
+function play() {
+    // This function plays one iteration of the game
+    // Get the grid element and all of its cells
+    const grid = document.getElementById('grid');
+    const cells = grid.querySelectorAll('.cell');
+
+    // Create a matrix to store the values of the cells
+    const matrix = [];
+
+    // Loop through the cells and store their values in the matrix
+    cells.forEach((cell) => {
+        const row = parseInt(cell.getAttribute('data-row'));
+        const col = parseInt(cell.getAttribute('data-col'));
+        const value = parseInt(cell.getAttribute('data-value'));
+
+        if (!matrix[row]) {
+            matrix[row] = [];
+        }
+        matrix[row][col] = value;
+    });
+
+    const nextMatrix = getNextGeneration(matrix);
+    updateGrid(nextMatrix);
+}
+
+function togglePlayBtn() {
+    // This function toggles the play button to a pause button and vice versa
+    const playButton = document.getElementById('play-btn');
+    const btnContent = playButton.children[0];
+    if (btnContent.classList.contains('fa-play')) {
+        btnContent.classList.remove('fa-play');
+        btnContent.classList.add('fa-stop');
+        playButton.setAttribute('onclick', 'pressPause()');
+    } else {
+        btnContent.classList.remove('fa-stop');
+        btnContent.classList.add('fa-play');
+        playButton.setAttribute('onclick', 'pressPlay()');
+    }
 }
 
 function getNextGeneration(matrix) {
@@ -190,60 +251,4 @@ function updateGrid(matrix) {
         cell.setAttribute('data-value', value);
         cell.style.backgroundColor = COLOR_MAP[value];
     });
-}
-
-function pressPlay() {
-    // This function starts the game when a player presses the play button
-    togglePlayBtn();
-    clearInterval(intervalId);
-    // your logic for updating the grid for the next iteration
-    console.log(intervalTime)
-    intervalId = setInterval(play, intervalTime);
-    play();
-}
-
-function pressPause() {
-    // This function pauses the game when a player presses the pause button
-    togglePlayBtn();
-    clearInterval(intervalId);
-}
-
-function play() {
-    // This function plays one iteration of the game
-    // Get the grid element and all of its cells
-    const grid = document.getElementById('grid');
-    const cells = grid.querySelectorAll('.cell');
-
-    // Create a matrix to store the values of the cells
-    const matrix = [];
-
-    // Loop through the cells and store their values in the matrix
-    cells.forEach((cell) => {
-        const row = parseInt(cell.getAttribute('data-row'));
-        const col = parseInt(cell.getAttribute('data-col'));
-        const value = parseInt(cell.getAttribute('data-value'));
-
-        if (!matrix[row]) {
-            matrix[row] = [];
-        }
-        matrix[row][col] = value;
-    });
-
-    const nextMatrix = getNextGeneration(matrix);
-    updateGrid(nextMatrix);
-}
-
-function togglePlayBtn() {
-    // This function toggles the play button to a pause button and vice versa
-    const playButton = document.getElementById('play-btn');
-    const btnContent = playButton.children[0];
-    if (btnContent.classList.contains('fa-play')) {
-        btnContent.classList.remove('fa-play');
-        btnContent.classList.add('fa-stop');
-        playButton.setAttribute('onclick', 'pressPause()');
-    } else {
-        btnContent.classList.remove('fa-stop');
-        btnContent.classList.add('fa-play');
-        playButton.setAttribute('onclick', 'pressPlay()');
-    }
 }
