@@ -2,16 +2,16 @@
   user-select: none;
 }
 
+h1 {
+  text-align: center;
+}
+
 .container {
   display: grid;
   align-items: center;
   justify-content: center;
   /* Make height same as screen height */
   height: 100%;
-}
-
-h1 {
-  text-align: center;
 }
 
 .input-container {
