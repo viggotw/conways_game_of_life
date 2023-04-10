@@ -99,20 +99,19 @@ function toggleColor(event) {
 
 function updateInterval() {
     clearInterval(intervalId);
-    console.log(intervalTime)
     intervalId = setInterval(play, intervalTime);
 }
 
 function pressPlay() {
     // This function starts the game when a player presses the play button
-    togglePlayBtn();
+    togglePlayButton();
     updateInterval();
     play();
 }
 
 function pressPause() {
     // This function pauses the game when a player presses the pause button
-    togglePlayBtn();
+    togglePlayButton();
     clearInterval(intervalId);
 }
 
@@ -141,7 +140,7 @@ function play() {
     updateGrid(nextMatrix);
 }
 
-function togglePlayBtn() {
+function togglePlayButton() {
     // This function toggles the play button to a pause button and vice versa
     const playButton = document.getElementById('play-btn');
     const btnContent = playButton.children[0];
