@@ -7,7 +7,7 @@ const COLOR_MAP = {
 // Global variables
 const speedSlider = document.getElementById("speedSlider");
 
-let intervalTime = 1000 / speedSlider.value; // set initial interval time based on slider value
+let intervalTime = 1000 / (1+parseInt(speedSlider.value)); // set initial interval time based on slider value
 let painting = false;
 let paintValue = 0;
 let intervalId;
@@ -23,10 +23,11 @@ window.addEventListener('load', function () {
 });
 
 speedSlider.addEventListener("input", () => {
-    intervalTime = 1000 / speedSlider.value;
+    intervalTime = 1000 / (1+parseInt(speedSlider.value))
 });
 
 function createGrid() {
+    // This function creates a grid based on the size input
     let size = document.getElementById("size").value;
     let grid = document.getElementById("grid");
     grid.innerHTML = "";
@@ -46,6 +47,7 @@ function createGrid() {
 }
 
 function clearGrid() {
+    // This function clears the grid
     let cells = document.getElementsByClassName("cell");
     for (let i = 0; i < cells.length; i++) {
         cells[i].setAttribute("data-value", 0);
@@ -54,6 +56,7 @@ function clearGrid() {
 }
 
 function startPainting(event) {
+    // This function start painting on the grid
     if (event.target.classList.contains("cell")) {
         painting = true;
         paintValue = toggleColor(event);
@@ -62,11 +65,13 @@ function startPainting(event) {
 }
 
 function stopPainting(event) {
+    // This function stop painting on the grid
     painting = false;
     event.target.addEventListener("mouseover", applyPainting);
 }
 
 function applyPainting(event) {
+    // This function, while painting, applies paint to cells on the grid
     let cell = event.target;
     if (painting && cell.classList.contains("cell")) {
         cell.setAttribute("data-value", paintValue);
@@ -75,6 +80,7 @@ function applyPainting(event) {
 }
 
 function toggleColor(event) {
+    // This function toggles the color of a cell
     let cell = event.target;
     let currentValue = parseInt(cell.getAttribute('data-value'));
     let newValue;
@@ -90,6 +96,7 @@ function toggleColor(event) {
 }
 
 function getNextGeneration(matrix) {
+    // This function creates the next generation of the matrix
     const nextMatrix = [];
 
     // Loop through the matrix and get the next generation
@@ -108,6 +115,7 @@ function getNextGeneration(matrix) {
 }
 
 function getNextCellValue(matrix, rowIndex, cellIndex) {
+    // This function gets the next value for a cell
     const currentValue = matrix[rowIndex][cellIndex];
     const liveNeighbors = getLiveNeighbors(matrix, rowIndex, cellIndex);
 
@@ -128,6 +136,7 @@ function getNextCellValue(matrix, rowIndex, cellIndex) {
 }
 
 function getLiveNeighbors(matrix, rowIndex, cellIndex) {
+    // This function gets the number of live neighbors for a cell
     let liveNeighbors = 0;
 
     // Check the top row
@@ -168,6 +177,7 @@ function getLiveNeighbors(matrix, rowIndex, cellIndex) {
 }
 
 function updateGrid(matrix) {
+    // This function updates the HTML grid with the next generation
     const grid = document.getElementById('grid');
     const cells = grid.querySelectorAll('.cell');
 
@@ -183,19 +193,23 @@ function updateGrid(matrix) {
 }
 
 function pressPlay() {
+    // This function starts the game when a player presses the play button
     togglePlayBtn();
     clearInterval(intervalId);
     // your logic for updating the grid for the next iteration
+    console.log(intervalTime)
     intervalId = setInterval(play, intervalTime);
     play();
 }
 
 function pressPause() {
+    // This function pauses the game when a player presses the pause button
     togglePlayBtn();
     clearInterval(intervalId);
 }
 
 function play() {
+    // This function plays one iteration of the game
     // Get the grid element and all of its cells
     const grid = document.getElementById('grid');
     const cells = grid.querySelectorAll('.cell');
@@ -214,14 +228,13 @@ function play() {
         }
         matrix[row][col] = value;
     });
-    console.log(matrix);
 
     const nextMatrix = getNextGeneration(matrix);
     updateGrid(nextMatrix);
 }
 
 function togglePlayBtn() {
-    // Toggle the play button into a stop button with class="fa-solid fa-stop" and link to the pause function
+    // This function toggles the play button to a pause button and vice versa
     const playButton = document.getElementById('play-btn');
     const btnContent = playButton.children[0];
     if (btnContent.classList.contains('fa-play')) {
