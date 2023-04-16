@@ -21,6 +21,12 @@ h1 {
   margin-bottom: 10px;
 }
 
+.colorbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .input-container label {
   margin-right: 10px;
 }
@@ -32,6 +38,16 @@ h1 {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+}
+
+.colorbar-cell {
+  height: 50px;
+  width: 50px;
+  border: 1px solid black;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 2px;
+  /* box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); */
 }
 
 .cell {

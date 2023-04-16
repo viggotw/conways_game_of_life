@@ -1,16 +1,16 @@
 // Constants
 const COLOR_MAP = {
-    0: 'white',
-    1: '#333',
-    2: '#CCC',
-    3: '#F64F64'
+    0: 'white',  // dead
+    1: '#333',  // alive
+    2: '#CCC',  // disabled
+    3: '#F64F64'  // objective
 };
 const NUM_COLORS = 4;
 
 // Global variables
 const speedSlider = document.getElementById("speedSlider");
 
-let intervalTime = 1000 / (1+parseInt(speedSlider.value)); // set initial interval time based on slider value
+let intervalTime = 1000 / (1 + parseInt(speedSlider.value)); // set initial interval time based on slider value
 let painting = false;
 let paintValue = 0;
 let intervalId;
@@ -22,13 +22,29 @@ window.addEventListener('load', function () {
     document.addEventListener("mousedown", startPainting);
     document.addEventListener("mouseup", stopPainting);
     document.addEventListener("mouseover", applyPainting);
+    createColorbar();
     createGrid();
 });
 
 speedSlider.addEventListener("input", () => {
-    intervalTime = 1000 / (1+parseInt(speedSlider.value))
+    intervalTime = 1000 / (1 + parseInt(speedSlider.value))
     updateInterval();
 });
+
+function createColorbar() {
+    // This function populates the colorbar and adds event listeners to each color
+    let colorbar = document.getElementById("colorbar");
+    for (let i = 0; i < NUM_COLORS; i++) {
+        let color = document.createElement("div");
+        color.classList.add("colorbar-cell");
+        color.setAttribute("data-value", i);
+        color.style.backgroundColor = COLOR_MAP[i];
+        color.addEventListener("click", function (event) {
+            paintValue = parseInt(event.target.getAttribute("data-value"));
+        });
+        colorbar.appendChild(color);
+    }
+}
 
 function createGrid() {
     // This function creates a grid based on the size input
@@ -63,7 +79,7 @@ function startPainting(event) {
     // This function start painting on the grid
     if (event.target.classList.contains("cell")) {
         painting = true;
-        paintValue = toggleColor(event);
+        applyPainting(event);
         event.target.removeEventListener("mouseover", applyPainting);
     }
 }
@@ -81,22 +97,6 @@ function applyPainting(event) {
         cell.setAttribute("data-value", paintValue);
         cell.style.backgroundColor = COLOR_MAP[paintValue];
     }
-}
-
-function toggleColor(event) {
-    // This function toggles the color of a cell
-    let cell = event.target;
-    let currentValue = parseInt(cell.getAttribute('data-value'));
-    let newValue;
-
-    newValue = currentValue + 1;
-    if (newValue === NUM_COLORS) {
-        newValue = 0;
-    }
-
-    cell.setAttribute('data-value', newValue);
-    cell.style.backgroundColor = COLOR_MAP[newValue];
-    return newValue;
 }
 
 function updateInterval() {
